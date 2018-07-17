@@ -260,5 +260,3 @@ def post(driver):
         driver.get(HOMEPAGE)
 
 load_driver()
-input()
-
