@@ -15,22 +15,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
-
 HOMEPAGE = 'https://translate.google.com/'
 DRIVER_PATH = './chrome_driver/chromedriver.exe'
 
 #inputs
 TURNS = 20000
 
-
 XLSX = './output/output ' + str(strftime("%Y-%m-%d %H-%M-%S", gmtime())) + '.xlsx'
-
-
-
-
-
-
 
 def load_driver():
     if os.path.isfile(DRIVER_PATH):
@@ -46,11 +37,8 @@ def load_driver():
         os.makedirs('./output')
 
     #create workbook
-
     wb = Workbook()
-
     wb.save(XLSX)
-
 
     post(driver)
 
@@ -106,9 +94,7 @@ def key_gen(size):
                    'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'я', 'ч', 'с', 'м',
                    'и', 'т', 'ь', 'б', 'ю', 'ё',]
 
-
         the_list = []
-
 
         the_list.append(hebrew)
         shuffle(hebrew)
@@ -141,9 +127,7 @@ def key_gen(size):
             #to choose from
             #choice(me) to choose from same list
             #choice(em) mixed
-
             key += ''.join(random.choice(em) for _ in range(random.randint(2, 3)))  # chars per word 2-3
-
             key += ' '  # adds spcae
 
     return key
@@ -154,37 +138,27 @@ def post(driver):
     counter = 0
 
     while counter < TURNS:
+        
         counter += 1
         print(counter)
-
         source = driver.find_element(By.XPATH, '//*[@id="source"]')
-
         key = (key_gen(int(random.randint(15, 45)))) #char counter 15-45
-
         source.send_keys(key)
-
         time.sleep(0.5)
-
         global_var1 = key
 
         try:
             try:
                 time.sleep(1.5)
-
                 link = driver.find_element(By.XPATH, '/ html / body')
                 link.click()
-
                 result = driver.find_element(By.XPATH,
                                              "./html/body/div/div/form/div/div/div/div/div/div/div/div/div/div/span[@id='result_box']/span")
                 re = result.text
-
                 global_var2 = (str(re))
-
                 wb = openpyxl.load_workbook(XLSX)
-
                 # grab the active worksheet
                 ws = wb.active
-
                 if global_var2.strip(' ') == global_var1.strip(' '):
                     ws['C' + str(counter)].value = 'same_string'
 
@@ -196,15 +170,10 @@ def post(driver):
                 ws['B' + str(counter)].value = str(global_var2)
 
                 # lang detection
-
                 detection = driver.find_element(By.XPATH, './/*[@id="gt-sl-sugg"]/div/div[5]')
-
                 de = detection.text
-
                 detected = (str(de))
-
                 print('Language: ' + detected)
-
                 ws['D' + str(counter)].value = str(detected)
 
                 # Save the file
@@ -213,21 +182,15 @@ def post(driver):
             except NoSuchElementException:
 
                 print('ElementException')
-
                 time.sleep(8)
-
                 result = WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.XPATH,
                                                     "./html/body/div/div/form/div/div/div/div/div/div/div/div/div/div/span[@id='result_box']/span"))
                 )
-
                 link = driver.find_element(By.XPATH, '/ html / body')
                 link.click()
-
                 re = result.text
-
                 global_var2 = (str(re))
-
                 wb = openpyxl.load_workbook(XLSX)
 
                 # grab the active worksheet
@@ -243,7 +206,6 @@ def post(driver):
                 # Data can be assigned directly to cells
                 ws['A' + str(counter)].value = str(global_var1)
                 ws['B' + str(counter)].value = str(global_var2)
-
                 ws['E' + str(counter)].value = 'NoSuchElementException'
 
                 # Save the file
@@ -254,8 +216,6 @@ def post(driver):
             print('TimeoutException')
 
             pass
-
-
 
         driver.get(HOMEPAGE)
 
