@@ -19,7 +19,7 @@ HOMEPAGE = 'https://translate.google.com/'
 DRIVER_PATH = './chrome_driver/chromedriver.exe'
 
 # ['unique', 'chars'] to choose unique chars
-# [] to choose from same list
+# [] to choose from the same list
 # [1] to choose from mixed lists
 UNIQ = []
 
